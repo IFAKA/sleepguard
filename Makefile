@@ -12,16 +12,21 @@ all: package
 build:
 	swift build -c release
 
-package: build
+assets/SleepGuard.icns: Scripts/generate_app_icon.swift
+	swift Scripts/generate_app_icon.swift
+
+package: build assets/SleepGuard.icns
 	rm -rf $(DIST_DIR)
 	mkdir -p $(APP_DIR)/Contents/MacOS
 	mkdir -p $(APP_DIR)/Contents/Resources
 	mkdir -p $(HELPER_APP_DIR)/Contents/MacOS
 	cp $(BUILD_DIR)/$(APP_NAME) $(APP_DIR)/Contents/MacOS/$(APP_NAME)
 	cp $(BUILD_DIR)/$(HELPER_NAME) $(HELPER_APP_DIR)/Contents/MacOS/$(HELPER_NAME)
+	cp assets/SleepGuard.icns $(APP_DIR)/Contents/Resources/SleepGuard.icns
 	plutil -create xml1 $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleExecutable -string $(APP_NAME) $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleIdentifier -string com.faka.sleepguard $(APP_DIR)/Contents/Info.plist
+	plutil -insert CFBundleIconFile -string SleepGuard.icns $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleName -string $(APP_NAME) $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundlePackageType -string APPL $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleShortVersionString -string 0.1.0 $(APP_DIR)/Contents/Info.plist

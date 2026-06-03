@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct OverlayView: View {
@@ -44,7 +45,7 @@ struct OverlayView: View {
         }
         .padding(18)
         .frame(width: 520, height: 156)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(expandedBackground)
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(.separator, lineWidth: 1)
@@ -109,11 +110,29 @@ struct OverlayView: View {
         }
         .padding(.horizontal, 14)
         .frame(width: 252, height: 56)
-        .background(.thinMaterial, in: Capsule())
+        .background(collapsedBackground)
         .overlay {
             Capsule().stroke(.separator, lineWidth: 1)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("SleepGuard countdown pill")
+    }
+
+    private var expandedBackground: some View {
+        RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .fill(.regularMaterial)
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color(nsColor: .windowBackgroundColor).opacity(0.72))
+            }
+    }
+
+    private var collapsedBackground: some View {
+        Capsule()
+            .fill(.regularMaterial)
+            .overlay {
+                Capsule()
+                    .fill(Color(nsColor: .windowBackgroundColor).opacity(0.72))
+            }
     }
 }

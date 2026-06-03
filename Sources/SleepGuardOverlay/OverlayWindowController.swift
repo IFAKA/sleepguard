@@ -80,7 +80,7 @@ final class OverlayWindowController: ObservableObject {
         panel.contentViewController = hostingController
         panel.backgroundColor = .clear
         panel.isOpaque = false
-        panel.alphaValue = previewMode ? 0.9 : 0.96
+        panel.alphaValue = 1
         panel.hasShadow = true
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
@@ -130,8 +130,8 @@ final class OverlayWindowController: ObservableObject {
         guard let screen = NSScreen.main else { return }
         let visible = screen.visibleFrame
         let frame = panel.frame
-        let x = visible.midX - frame.width / 2
-        let y = visible.maxY - frame.height - 18
+        let x = max(visible.minX + OverlayMetrics.screenMargin, visible.maxX - frame.width - OverlayMetrics.screenMargin)
+        let y = visible.maxY - frame.height - OverlayMetrics.screenMargin
         panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 
@@ -153,6 +153,7 @@ final class OverlayWindowController: ObservableObject {
 private enum OverlayMetrics {
     static let expandedSize = NSSize(width: 520, height: 156)
     static let collapsedSize = NSSize(width: 252, height: 56)
+    static let screenMargin: CGFloat = 24
 }
 
 private enum CountdownFormatter {

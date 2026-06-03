@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/sleepguard-icon.png" alt="SleepGuard app icon" width="128" height="128">
+</p>
+
 # SleepGuard
 
 SleepGuard is a native Swift macOS bedtime reminder and sleep schedule app that helps you wake at 5:45 AM by getting you off the Mac early enough to wind down.
