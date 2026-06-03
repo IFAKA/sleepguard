@@ -119,20 +119,35 @@ final class OverlayWindowController: ObservableObject {
     private func resize() {
         guard let window else { return }
         let targetSize = isCollapsed ? OverlayMetrics.collapsedSize : OverlayMetrics.expandedSize
-        var frame = window.frame
-        frame.origin.y += frame.height - targetSize.height
-        frame.size = targetSize
+        let frame = frameForCurrentScreen(size: targetSize)
         window.setFrame(frame, display: true, animate: true)
-        position(panel: window)
     }
 
     private func position(panel: NSPanel) {
-        guard let screen = NSScreen.main else { return }
+        let targetSize = isCollapsed ? OverlayMetrics.collapsedSize : OverlayMetrics.expandedSize
+        panel.setFrame(frameForCurrentScreen(size: targetSize), display: true)
+    }
+
+    private func frameForCurrentScreen(size: NSSize) -> NSRect {
+        let screen = screenForPlacement()
         let visible = screen.visibleFrame
-        let frame = panel.frame
-        let x = max(visible.minX + OverlayMetrics.screenMargin, visible.maxX - frame.width - OverlayMetrics.screenMargin)
-        let y = visible.maxY - frame.height - OverlayMetrics.screenMargin
-        panel.setFrameOrigin(NSPoint(x: x, y: y))
+        let margin = OverlayMetrics.screenMargin
+        let minX = visible.minX + margin
+        let maxX = visible.maxX - size.width - margin
+        let minY = visible.minY + margin
+        let maxY = visible.maxY - size.height - margin
+        let preferredX = visible.maxX - size.width - margin
+        let preferredY = visible.maxY - size.height - margin
+        let x = min(max(preferredX, minX), maxX)
+        let y = min(max(preferredY, minY), maxY)
+        return NSRect(origin: NSPoint(x: x, y: y), size: size)
+    }
+
+    private func screenForPlacement() -> NSScreen {
+        let mouseLocation = NSEvent.mouseLocation
+        return NSScreen.screens.first { screen in
+            screen.frame.contains(mouseLocation)
+        } ?? NSScreen.main ?? NSScreen.screens[0]
     }
 
     private func requestGracefulLogout() {
