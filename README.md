@@ -1,8 +1,23 @@
 # SleepGuard
 
-SleepGuard is a battery-first macOS bedtime utility that helps you wake at 5:45 AM by getting you off the Mac early enough to wind down.
+SleepGuard is a native Swift macOS bedtime reminder and sleep schedule app that helps you wake at 5:45 AM by getting you off the Mac early enough to wind down.
 
-Social-share one-liner: **A native macOS bedtime guard that uses launchd scheduling instead of an idle daemon.**
+**A battery-first macOS sleep schedule app that uses launchd instead of an always-on daemon.**
+
+SleepGuard is built for people who want a simple, local-first Mac bedtime utility without Electron, analytics, a menu bar process, or a polling loop.
+
+## Highlights
+
+- Native macOS app written in Swift, SwiftUI, and AppKit.
+- Per-user `launchd` scheduling with `StartCalendarInterval`.
+- Zero idle SleepGuard process when the app and overlay are closed.
+- Calm non-blocking countdown overlay with one snooze.
+- Graceful logout request that lets macOS show normal unsaved-work prompts.
+- Light Mode, Dark Mode, keyboard navigation, and VoiceOver-friendly labels.
+
+## Keywords
+
+`macos bedtime app`, `macos sleep schedule`, `macos sleep reminder`, `launchd app`, `native swift macos`, `battery friendly mac app`, `logout reminder`, `bedtime reminder`, `swiftui macos app`, `no background daemon`
 
 ## What It Does
 
@@ -32,6 +47,16 @@ make package
 
 The packaged app is written to `dist/SleepGuard.app`.
 
+## Install Locally
+
+```sh
+make package
+cp -R dist/SleepGuard.app /Applications/
+open /Applications/SleepGuard.app
+```
+
+Click **Save Schedule** in the app to install the per-user LaunchAgent. Closing SleepGuard after that is expected; launchd starts the overlay at the warning time.
+
 ## Run From Source
 
 ```sh
@@ -51,6 +76,13 @@ SleepGuard has three Swift targets:
 - `SleepGuardCore`: shared schedule model, persistence, and LaunchAgent management.
 - `SleepGuard`: visible native settings app.
 - `SleepGuardOverlay`: hidden helper launched only at warning time.
+
+The app follows a small clean architecture:
+
+- domain and infrastructure in `SleepGuardCore`
+- settings presentation in `Sources/SleepGuard`
+- scheduled overlay presentation in `Sources/SleepGuardOverlay`
+- no business logic hidden in generated project files
 
 See [docs/architecture.md](docs/architecture.md).
 

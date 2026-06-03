@@ -10,6 +10,30 @@ SleepGuard is split into a visible settings app, a scheduled overlay helper, and
 
 `SleepGuardOverlay` is an accessory helper with no Dock icon. launchd starts it at the configured warning time using `StartCalendarInterval`.
 
+## Source Layout
+
+```text
+Sources/
+  SleepGuardCore/
+    SleepSchedule.swift
+    ScheduleStore.swift
+    LaunchAgentManager.swift
+  SleepGuard/
+    main.swift
+    SettingsWindowController.swift
+    SettingsViewModel.swift
+    OverlayExecutableResolver.swift
+    SettingsView.swift
+  SleepGuardOverlay/
+    main.swift
+    OverlayOptions.swift
+    OverlayWindowController.swift
+    OverlayPanel.swift
+    OverlayView.swift
+```
+
+The core target owns domain state and system integration. The settings app owns user preferences and LaunchAgent installation. The overlay owns runtime countdown UI only.
+
 ## LaunchAgent Flow
 
 The settings app writes `~/Library/LaunchAgents/com.faka.sleepguard.overlay.plist` with absolute paths. `Sources/SleepGuardCore/Resources/LaunchAgents/com.faka.sleepguard.overlay.plist` is a readable template for documentation and tests; the runtime plist is generated from the current app location.
