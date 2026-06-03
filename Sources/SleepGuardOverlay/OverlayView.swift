@@ -5,15 +5,24 @@ struct OverlayView: View {
     @ObservedObject var controller: OverlayWindowController
 
     var body: some View {
-        Group {
-            if controller.isCollapsed {
-                collapsed
-            } else {
-                expanded
-            }
+        ZStack {
+            morphingBackground
+            expanded
+                .opacity(controller.isCollapsed ? 0 : 1)
+                .scaleEffect(controller.isCollapsed ? 0.86 : 1, anchor: .trailing)
+                .accessibilityHidden(controller.isCollapsed)
+            collapsed
+                .opacity(controller.isCollapsed ? 1 : 0)
+                .scaleEffect(controller.isCollapsed ? 1 : 1.12, anchor: .trailing)
+                .accessibilityHidden(!controller.isCollapsed)
         }
+        .frame(
+            width: controller.isCollapsed ? 164 : 520,
+            height: controller.isCollapsed ? 52 : 156
+        )
         .buttonStyle(.bordered)
         .tint(.accentColor)
+        .animation(.smooth(duration: 0.24), value: controller.isCollapsed)
         .onExitCommand {
             controller.closePreview()
         }
@@ -45,11 +54,6 @@ struct OverlayView: View {
         }
         .padding(18)
         .frame(width: 520, height: 156)
-        .background(expandedBackground)
-        .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(.separator, lineWidth: 1)
-        }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("SleepGuard bedtime overlay")
     }
@@ -109,30 +113,30 @@ struct OverlayView: View {
             .accessibilityLabel("Expand SleepGuard")
         }
         .padding(.horizontal, 14)
-        .frame(width: 252, height: 56)
-        .background(collapsedBackground)
-        .overlay {
-            Capsule().stroke(.separator, lineWidth: 1)
-        }
+        .frame(width: 164, height: 52)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("SleepGuard countdown pill")
     }
 
-    private var expandedBackground: some View {
-        RoundedRectangle(cornerRadius: 14, style: .continuous)
+    private var morphingBackground: some View {
+        RoundedRectangle(
+            cornerRadius: controller.isCollapsed ? 26 : 14,
+            style: .continuous
+        )
             .fill(.regularMaterial)
             .overlay {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(
+                    cornerRadius: controller.isCollapsed ? 26 : 14,
+                    style: .continuous
+                )
                     .fill(Color(nsColor: .windowBackgroundColor).opacity(0.72))
             }
-    }
-
-    private var collapsedBackground: some View {
-        Capsule()
-            .fill(.regularMaterial)
             .overlay {
-                Capsule()
-                    .fill(Color(nsColor: .windowBackgroundColor).opacity(0.72))
+                RoundedRectangle(
+                    cornerRadius: controller.isCollapsed ? 26 : 14,
+                    style: .continuous
+                )
+                .stroke(.separator, lineWidth: 1)
             }
     }
 }

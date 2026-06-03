@@ -26,7 +26,8 @@ package: build assets/SleepGuard.icns
 	plutil -create xml1 $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleExecutable -string $(APP_NAME) $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleIdentifier -string com.faka.sleepguard $(APP_DIR)/Contents/Info.plist
-	plutil -insert CFBundleIconFile -string SleepGuard.icns $(APP_DIR)/Contents/Info.plist
+	plutil -insert CFBundleIconFile -string SleepGuard $(APP_DIR)/Contents/Info.plist
+	plutil -insert CFBundleIconName -string SleepGuard $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleName -string $(APP_NAME) $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundlePackageType -string APPL $(APP_DIR)/Contents/Info.plist
 	plutil -insert CFBundleShortVersionString -string 0.1.0 $(APP_DIR)/Contents/Info.plist

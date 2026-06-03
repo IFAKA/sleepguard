@@ -44,7 +44,9 @@ final class OverlayWindowController: ObservableObject {
     }
 
     func toggleCollapsed() {
-        isCollapsed.toggle()
+        withAnimation(.smooth(duration: 0.24)) {
+            isCollapsed.toggle()
+        }
         resize()
     }
 
@@ -167,7 +169,7 @@ final class OverlayWindowController: ObservableObject {
 
 private enum OverlayMetrics {
     static let expandedSize = NSSize(width: 520, height: 156)
-    static let collapsedSize = NSSize(width: 252, height: 56)
+    static let collapsedSize = NSSize(width: 164, height: 52)
     static let screenMargin: CGFloat = 24
 }
 
