@@ -13,6 +13,9 @@ struct OverlayView: View {
         }
         .buttonStyle(.bordered)
         .tint(.accentColor)
+        .onExitCommand {
+            controller.closePreview()
+        }
     }
 
     private var expanded: some View {
@@ -41,7 +44,7 @@ struct OverlayView: View {
         }
         .padding(18)
         .frame(width: 520, height: 156)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(.separator, lineWidth: 1)
@@ -58,6 +61,16 @@ struct OverlayView: View {
                 Label("Collapse", systemImage: "chevron.up")
             }
             .accessibilityHint("Collapses SleepGuard into a small countdown pill.")
+
+            if controller.previewMode {
+                Button {
+                    controller.closePreview()
+                } label: {
+                    Label("Close", systemImage: "xmark.circle")
+                }
+                .keyboardShortcut(.cancelAction)
+                .accessibilityHint("Closes the preview overlay.")
+            }
 
             Button {
                 controller.snooze()
@@ -96,7 +109,7 @@ struct OverlayView: View {
         }
         .padding(.horizontal, 14)
         .frame(width: 252, height: 56)
-        .background(.regularMaterial, in: Capsule())
+        .background(.thinMaterial, in: Capsule())
         .overlay {
             Capsule().stroke(.separator, lineWidth: 1)
         }

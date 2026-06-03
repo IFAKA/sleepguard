@@ -11,12 +11,13 @@ final class OverlayWindowController: ObservableObject {
     @Published var isFinalPrompt = false
 
     private let schedule: SleepSchedule
-    private let previewMode: Bool
     private let noLogout: Bool
     private var deadline: Date
     private var finalDeadline: Date?
     private var timer: Timer?
     private var window: NSPanel?
+
+    let previewMode: Bool
 
     init(schedule: SleepSchedule, previewMode: Bool, noLogout: Bool) {
         self.schedule = schedule
@@ -60,6 +61,13 @@ final class OverlayWindowController: ObservableObject {
         requestGracefulLogout()
     }
 
+    func closePreview() {
+        guard previewMode else { return }
+        timer?.invalidate()
+        window?.close()
+        NSApp.terminate(nil)
+    }
+
     private func makePanel() -> NSPanel {
         let contentView = OverlayView(controller: self)
         let hostingController = NSHostingController(rootView: contentView)
@@ -72,6 +80,7 @@ final class OverlayWindowController: ObservableObject {
         panel.contentViewController = hostingController
         panel.backgroundColor = .clear
         panel.isOpaque = false
+        panel.alphaValue = previewMode ? 0.9 : 0.96
         panel.hasShadow = true
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
@@ -95,7 +104,9 @@ final class OverlayWindowController: ObservableObject {
 
         let remaining = max(0, Int(deadline.timeIntervalSince(now)))
         remainingText = CountdownFormatter.string(fromSeconds: remaining)
-        statusText = "Graceful logout target: \(schedule.logoutTime.displayString). In bed target: \(schedule.inBedTime.displayString)."
+        statusText = previewMode
+            ? "Preview mode. Press Escape or Close when finished."
+            : "Graceful logout target: \(schedule.logoutTime.displayString). In bed target: \(schedule.inBedTime.displayString)."
 
         if remaining == 0 {
             isFinalPrompt = true
